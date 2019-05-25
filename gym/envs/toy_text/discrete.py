@@ -52,8 +52,8 @@ class DiscreteEnv(Env):
         self.lastaction = None
         return self.s
 
-    def step(self, a, fidelity=0):
-        if fidelity not in self.P:
+    def step(self, a, fidelity):
+        if fidelity >= len(self.P):
             raise IndexError('Fidelity level ' + str(fidelity) + '. not supported')
         transitions = self.P[fidelity][self.s][a]
         i = categorical_sample([t[0] for t in transitions], self.np_random)

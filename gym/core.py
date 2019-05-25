@@ -39,7 +39,7 @@ class Env(object):
     action_space = None
     observation_space = None
 
-    def step(self, action):
+    def step(self, action, fidelity):
         """Run one timestep of the environment's dynamics. When end of
         episode is reached, you are responsible for calling `reset()`
         to reset this environment's state.
@@ -203,6 +203,7 @@ class Wrapper(Env):
         Don't forget to call ``super().__init__(env)`` if the subclass overrides :meth:`__init__`.
     
     """
+
     def __init__(self, env):
         self.env = env
         self.action_space = self.env.action_space
@@ -220,8 +221,8 @@ class Wrapper(Env):
     def class_name(cls):
         return cls.__name__
 
-    def step(self, action):
-        return self.env.step(action)
+    def step(self, action, fidelity):
+        return self.env.step(action, fidelity)
 
     def reset(self, **kwargs):
         return self.env.reset(**kwargs)
@@ -254,8 +255,8 @@ class ObservationWrapper(Wrapper):
         observation = self.env.reset(**kwargs)
         return self.observation(observation)
 
-    def step(self, action):
-        observation, reward, done, info = self.env.step(action)
+    def step(self, action, fidelity):
+        observation, reward, done, info = self.env.step(action, fidelity)
         return self.observation(observation), reward, done, info
 
     def observation(self, observation):
@@ -266,8 +267,8 @@ class RewardWrapper(Wrapper):
     def reset(self, **kwargs):
         return self.env.reset(**kwargs)
 
-    def step(self, action):
-        observation, reward, done, info = self.env.step(action)
+    def step(self, action, fidelity):
+        observation, reward, done, info = self.env.step(action, fidelity)
         return observation, self.reward(reward), done, info
 
     def reward(self, reward):
@@ -278,8 +279,8 @@ class ActionWrapper(Wrapper):
     def reset(self, **kwargs):
         return self.env.reset(**kwargs)
 
-    def step(self, action):
-        return self.env.step(self.action(action))
+    def step(self, action, fidelity):
+        return self.env.step(self.action(action), fidelity)
 
     def action(self, action):
         raise NotImplementedError
