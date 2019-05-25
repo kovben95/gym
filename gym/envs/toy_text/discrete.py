@@ -29,6 +29,7 @@ class DiscreteEnv(Env):
 
     """
     def __init__(self, nS, nA, P, isd):
+        self.fidelity_supported = False
         self.P = P
         self.isd = isd
         self.lastaction = None # for rendering
@@ -55,7 +56,7 @@ class DiscreteEnv(Env):
     def step(self, a, fidelity):
         if fidelity >= len(self.P):
             raise IndexError('Fidelity level ' + str(fidelity) + '. not supported')
-        transitions = self.P[fidelity][self.s][a]
+        transitions = self.P[fidelity][self.s][a] if self.fidelity_supported else self.P[self.s][a]
         i = categorical_sample([t[0] for t in transitions], self.np_random)
         p, s, r, d= transitions[i]
         self.s = s
