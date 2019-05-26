@@ -8,7 +8,7 @@ import numpy as np
 MAP = [
     "+---------+",
     "|R: | : :G|",
-    "| : : :X: |",
+    "| : : :x: |",
     "| :X: : : |",
     "| | : | : |",
     "|Y| : |B: |",
@@ -88,7 +88,11 @@ class TaxiEnv(discrete.DiscreteEnv):
                                 new_row, new_col, new_pass_idx = row, col, pass_idx
                                 import random
                                 # default reward when there is no pickup/dropoff
-                                reward = -1 if self.desc[1 + row, 2 * col + 1] != b"X" else random.uniform(-11, 9)
+                                reward = -1
+                                if self.desc[1 + row, 2 * col + 1] == b"X" \
+                                        or self.desc[1 + row, 2 * col + 1] == b"x" and fidelity > 0:
+                                    reward = random.uniform(-11, 9)
+
                                 done = False
                                 taxi_loc = (row, col)
 
