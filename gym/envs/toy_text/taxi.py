@@ -90,8 +90,8 @@ class TaxiEnv(discrete.DiscreteEnv):
                                 # default reward when there is no pickup/dropoff
                                 reward = -1
                                 if self.desc[1 + row, 2 * col + 1] == b"X" \
-                                        or self.desc[1 + row, 2 * col + 1] == b"x" and fidelity > 0:
-                                    reward = random.uniform(-11, 9)
+                                        or (self.desc[1 + row, 2 * col + 1] == b"x" and fidelity > 0):
+                                    reward = random.uniform(-2, 0)
 
                                 done = False
                                 taxi_loc = (row, col)
