@@ -188,6 +188,13 @@ register(
 )
 
 register(
+    id='GridWorld-v0',
+    entry_point='gym.envs.toy_text:GridWorldEnv',
+    reward_threshold=8, # optimum = 8.46
+    max_episode_steps=150,
+)
+
+register(
     id='GuessingGame-v0',
     entry_point='gym.envs.toy_text:GuessingGame',
     max_episode_steps=200,
