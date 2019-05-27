@@ -59,6 +59,7 @@ class DiscreteEnv(Env):
         transitions = self.P[fidelity][self.s][a] if self.fidelity_supported else self.P[self.s][a]
         i = categorical_sample([t[0] for t in transitions], self.np_random)
         p, s, r, d= transitions[i]
+        r = r()
         self.s = s
         self.lastaction = a
         self.lastfidelity = fidelity
