@@ -152,7 +152,7 @@ class GridWorldEnv(discrete.DiscreteEnv):
         out[row][col] = utils.colorize(ul(out[row][col]), 'green', highlight=True)
         outfile.write('____________________\n')
         outfile.write("\n".join(['|' + "".join(row) + '|' for row in out]) + "\n")
-        outfile.write('____________________\n')
+        outfile.write('‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n')
         if self.lastaction is not None:
             outfile.write("  ({})\n".format(["South", "North", "East", "West"][self.lastaction]))
         else:
