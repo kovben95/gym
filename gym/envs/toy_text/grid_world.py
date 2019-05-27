@@ -84,7 +84,7 @@ class GridWorldEnv(discrete.DiscreteEnv):
     metadata = {'render.modes': ['human', 'ansi']}
 
     def __init__(self):
-        self.locs = locs = [(18, 0)]
+        self.locs = locs = [(17, 0)]
 
         self.size = 18
 
