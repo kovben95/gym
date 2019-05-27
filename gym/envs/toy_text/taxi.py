@@ -109,16 +109,16 @@ class TaxiEnv(discrete.DiscreteEnv):
                                     if (pass_idx < 4 and taxi_loc == locs[pass_idx]):
                                         new_pass_idx = 4
                                     elif fidelity > 1:  # passenger not at location
-                                        reward = -10
+                                        reward = lambda: -10
                                 elif action == 5:  # dropoff
                                     if (taxi_loc == locs[dest_idx]) and pass_idx == 4:
                                         new_pass_idx = dest_idx
                                         done = True
-                                        reward = 20
+                                        reward = lambda: 20
                                     elif (taxi_loc in locs) and pass_idx == 4:
                                         new_pass_idx = locs.index(taxi_loc)
                                     else:  # dropoff at wrong location
-                                        reward = -10
+                                        reward = lambda: -10
                                 new_state = self.encode(
                                     new_row, new_col, new_pass_idx, dest_idx)
                                 P[fidelity][state][action].append(
