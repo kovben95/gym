@@ -118,7 +118,7 @@ class GridWorldEnv(discrete.DiscreteEnv):
                             reward = lambda: -10
                         if new_state == self.encode(locs[0][0], locs[0][1]):
                             done = True
-                            reward += 120
+                            reward += lambda: 120 + reward()
                         else:
                             done = False
                         P[fidelity][state][action].append((1.0, new_state, reward, done))
