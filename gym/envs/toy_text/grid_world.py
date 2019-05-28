@@ -104,7 +104,7 @@ class GridWorldEnv(discrete.DiscreteEnv):
                     initial_state_distrib[state] += 1
                     for action in range(num_actions):
                         import random
-                        reward = (lambda: random.uniform(-12, 10)) if MAP[fidelity][row][col] == b"X" else (lambda: -1)
+                        reward = (lambda: random.uniform(-12, 10)) if MAP[fidelity][row][col] == "X" else (lambda: -1)
                         if action == 0:
                             new_state = self.encode(min(num_rows - 1, row + 1), col)
                         elif action == 1:
