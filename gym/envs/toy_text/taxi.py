@@ -64,7 +64,7 @@ class TaxiEnv(discrete.DiscreteEnv):
     def __init__(self):
         self.desc = np.asarray(MAP, dtype='c')
 
-        self.locs = locs = [(0,0), (0,4), (4,0), (4,3)]
+        self.locs = locs = [(0, 0), (0, 4), (4, 0), (4, 3)]
 
         num_states = 500
         num_rows = 5
@@ -93,7 +93,6 @@ class TaxiEnv(discrete.DiscreteEnv):
                                         or (self.desc[1 + row, 2 * col + 1] == b"x" and fidelity > 0):
                                     reward = lambda: random.uniform(-2, 0)
 
-
                                 done = False
                                 taxi_loc = (row, col)
 
@@ -119,10 +118,8 @@ class TaxiEnv(discrete.DiscreteEnv):
                                         new_pass_idx = locs.index(taxi_loc)
                                     else:  # dropoff at wrong location
                                         reward = lambda: -10
-                                new_state = self.encode(
-                                    new_row, new_col, new_pass_idx, dest_idx)
-                                P[fidelity][state][action].append(
-                                    (1.0, new_state, reward, done))
+                                new_state = None if done else self.encode(new_row, new_col, new_pass_idx, dest_idx)
+                                P[fidelity][state][action].append((1.0, new_state, reward, done))
         initial_state_distrib /= initial_state_distrib.sum()
         discrete.DiscreteEnv.__init__(
             self, num_states, num_actions, P, initial_state_distrib)
@@ -157,31 +154,34 @@ class TaxiEnv(discrete.DiscreteEnv):
 
         out = self.desc.copy().tolist()
         out = [[c.decode('utf-8') for c in line] for line in out]
-        taxi_row, taxi_col, pass_idx, dest_idx = self.decode(self.s)
+        if self.s is not None:
+            taxi_row, taxi_col, pass_idx, dest_idx = self.decode(self.s)
 
-        def ul(x): return "_" if x == " " else x
-        if pass_idx < 4:
-            out[1 + taxi_row][2 * taxi_col + 1] = utils.colorize(
-                out[1 + taxi_row][2 * taxi_col + 1], 'yellow', highlight=True)
-            pi, pj = self.locs[pass_idx]
-            out[1 + pi][2 * pj + 1] = utils.colorize(out[1 + pi][2 * pj + 1], 'blue', bold=True)
-        else:  # passenger in taxi
-            out[1 + taxi_row][2 * taxi_col + 1] = utils.colorize(
-                ul(out[1 + taxi_row][2 * taxi_col + 1]), 'green', highlight=True)
+            def ul(x):
+                return "_" if x == " " else x
 
-        di, dj = self.locs[dest_idx]
-        out[1 + di][2 * dj + 1] = utils.colorize(out[1 + di][2 * dj + 1], 'magenta')
-        outfile.write("\n".join(["".join(row) for row in out]) + "\n")
-        if self.lastaction is not None:
-            outfile.write("  ({})\n".format(["South", "North", "East", "West", "Pickup", "Dropoff"][self.lastaction]))
-        else:
-            outfile.write("\n")
-        if self.lastfidelity is not None:
-            outfile.write("  (Fidelity: {})\n".format(self.lastfidelity))
-        else:
-            outfile.write("\n")
+            if pass_idx < 4:
+                out[1 + taxi_row][2 * taxi_col + 1] = utils.colorize(
+                    out[1 + taxi_row][2 * taxi_col + 1], 'yellow', highlight=True)
+                pi, pj = self.locs[pass_idx]
+                out[1 + pi][2 * pj + 1] = utils.colorize(out[1 + pi][2 * pj + 1], 'blue', bold=True)
+            else:  # passenger in taxi
+                out[1 + taxi_row][2 * taxi_col + 1] = utils.colorize(
+                    ul(out[1 + taxi_row][2 * taxi_col + 1]), 'green', highlight=True)
 
-        # No need to return anything for human
-        if mode != 'human':
-            with closing(outfile):
-                return outfile.getvalue()
+            di, dj = self.locs[dest_idx]
+            out[1 + di][2 * dj + 1] = utils.colorize(out[1 + di][2 * dj + 1], 'magenta')
+            outfile.write("\n".join(["".join(row) for row in out]) + "\n")
+            if self.lastaction is not None:
+                outfile.write("  ({})\n".format(["South", "North", "East", "West", "Pickup", "Dropoff"][self.lastaction]))
+            else:
+                outfile.write("\n")
+            if self.lastfidelity is not None:
+                outfile.write("  (Fidelity: {})\n".format(self.lastfidelity))
+            else:
+                outfile.write("\n")
+
+            # No need to return anything for human
+            if mode != 'human':
+                with closing(outfile):
+                    return outfile.getvalue()

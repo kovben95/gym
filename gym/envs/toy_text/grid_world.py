@@ -116,9 +116,10 @@ class GridWorldEnv(discrete.DiscreteEnv):
                         # border
                         if new_state == state:
                             reward = lambda: -10
-                        if new_state == self.encode(locs[0][0], locs[0][1]):
+                        if state == self.encode(locs[0][0], locs[0][1]):
                             done = True
                             reward = lambda: 120
+                            new_state = None
                         else:
                             done = False
                         P[fidelity][state][action].append((1.0, new_state, reward, done))
@@ -144,12 +145,13 @@ class GridWorldEnv(discrete.DiscreteEnv):
 
         out = np.asarray(MAP[fidelity], dtype='c').tolist()
         out = [[c.decode('utf-8') for c in line] for line in out]
-        row, col = self.decode(self.s)
 
         def ul(x):
             return "_" if x == " " else x
 
-        out[row][col] = utils.colorize(ul(out[row][col]), 'green', highlight=True)
+        if self.s is not None:
+            row, col = self.decode(self.s)
+            out[row][col] = utils.colorize(ul(out[row][col]), 'green', highlight=True)
         outfile.write('____________________\n')
         outfile.write("\n".join(['|' + "".join(row) + '|' for row in out]) + "\n")
         outfile.write('‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n')
